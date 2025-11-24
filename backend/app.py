@@ -12,30 +12,28 @@ def home():
 
 @app.route('/match_jd', methods=['POST'])
 def match_resume_with_jd():
-    jd_text = request.form.get('jd', '')
-    resume_text = ''
-
-    # ✅ If user pasted resume text manually
-    if 'resume_text' in request.form and request.form['resume_text'].strip():
-        resume_text = request.form['resume_text'].strip()
-    
-    # ✅ If user uploaded a resume file
-    elif 'resume' in request.files:
-        resume_file = request.files['resume']
-        resume_text = extract_text_from_pdf(resume_file)
-
-    # ❌ If no resume provided
-    else:
-        return jsonify({"error": "Please upload a resume or paste text."}), 400
-
-    if not jd_text.strip():
-        return jsonify({"error": "Please provide a job description."}), 400
-
     try:
+        jd_text = request.form.get('jd', '')
+        resume_text = ''
+
+        if 'resume_text' in request.form and request.form['resume_text'].strip():
+            resume_text = request.form['resume_text'].strip()
+        elif 'resume' in request.files:
+            resume_file = request.files['resume']
+            resume_text = extract_text_from_pdf(resume_file)
+        else:
+            return jsonify({"error": "No resume provided"}), 400
+
+        if not jd_text.strip():
+            return jsonify({"error": "Job description missing"}), 400
+
         result = analyze_resume_vs_jd(resume_text, jd_text)
         return jsonify(result)
+
     except Exception as e:
-        return jsonify({"error": f"Server error: {e}"}), 500
+        import traceback
+        print("🔥 Backend Error Trace:\n", traceback.format_exc())  # full log in console
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':

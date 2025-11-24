@@ -140,40 +140,40 @@ function App() {
         {result && (
   <div className="mt-8">
     <h2 className="text-2xl font-bold text-green-600 mb-4">
-      AI Suggestions (Tailored to JD)
+      JD-Tailored Resume Suggestions
     </h2>
     <p className="mb-6 bg-blue-50 border-l-4 border-blue-500 p-4 text-gray-800 rounded-md">
       {result.summary}
     </p>
 
-    {/* Replacement list */}
-    {result.replacements && result.replacements.length > 0 ? (
-      result.replacements.map((r, i) => (
-        <div key={i} className="mb-4 bg-white p-4 border border-gray-200 rounded-lg shadow-sm">
-          <h3 className="text-lg font-semibold text-gray-700 mb-2">
-            {r.section || "General"}
+    {result.sections && result.sections.length > 0 ? (
+      result.sections.map((section, i) => (
+        <div key={i} className="mb-6 bg-gray-50 p-4 rounded-lg shadow-sm">
+          <h3 className="text-xl font-semibold text-gray-700 mb-3">
+            {section.section_name}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-red-50 border border-red-300 p-3 rounded-md">
               <h4 className="text-red-700 font-semibold mb-1">Original</h4>
               <p className="text-gray-800 text-sm whitespace-pre-wrap">
-                {r.original_phrase}
+                {section.original_text}
               </p>
             </div>
             <div className="bg-green-50 border border-green-300 p-3 rounded-md">
-              <h4 className="text-green-700 font-semibold mb-1">Suggested Replacement</h4>
+              <h4 className="text-green-700 font-semibold mb-1">JD-Aligned Rewrite</h4>
               <p className="text-gray-800 text-sm whitespace-pre-wrap">
-                {r.suggested_phrase}
+                {section.rewritten_text}
               </p>
             </div>
           </div>
         </div>
       ))
     ) : (
-      <p className="text-gray-600">No specific replacements found.</p>
+      <p className="text-gray-600">No rewritten sections found.</p>
     )}
   </div>
 )}
+
 
       </div>
 
