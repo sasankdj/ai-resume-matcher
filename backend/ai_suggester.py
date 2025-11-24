@@ -14,14 +14,11 @@ MODEL_ID = "gemini-2.5-flash"
 
 def generate_suggestions(resume_text: str, jd_text: str, missing_skills: list) -> dict:
     """
-    Generate a JD-tailored rewritten version of the resume using Gemini.
-    Output includes section-by-section original and improved text.
+    Rewrite each section of the resume aligned to JD.
+    Inject missing skills and key terms naturally into the rewritten version.
     """
     prompt = f"""
-    You are an AI resume optimization engine.
-
-    Your goal:
-    Rewrite this candidate's resume so it perfectly aligns with the given Job Description (JD).
+    You are a professional resume optimization engine.
 
     --- JOB DESCRIPTION ---
     {jd_text}
@@ -29,56 +26,48 @@ def generate_suggestions(resume_text: str, jd_text: str, missing_skills: list) -
     --- CANDIDATE RESUME ---
     {resume_text[:4000]}
 
-    --- INSTRUCTIONS ---
-    1. Analyze the job description carefully for keywords, skills, and responsibilities.
-    2. Identify relevant sections from the resume such as:
-       - Profile / Summary
-       - Experience
-       - Projects
-       - Skills (if any)
-    3. For each section, rewrite it to:
-       - Include key JD terms and responsibilities naturally.
-       - Make language more professional and metrics-driven.
-       - Emphasize alignment with the JD (e.g., “AI/ML Engineer” roles).
-    4. Do NOT summarize. Provide rewritten text that could replace the original section.
+    --- MISSING SKILLS / KEYWORDS ---
+    {', '.join(missing_skills) if missing_skills else 'None'}
 
-    Output *only valid JSON* with this structure:
+    --- TASK ---
+    1. Rewrite the resume sections (Profile, Experience, Projects) so they align with the JD.
+    2. Naturally incorporate the missing skills and keywords into the rewritten sections.
+    3. Keep it concise, formal, and achievement-focused.
+    4. Output must be valid JSON, strictly following this structure:
+
     {{
-      "summary": "Brief note about overall JD alignment and changes made.",
+      "summary": "Brief note about how the resume was tailored to the JD.",
       "sections": [
         {{
           "section_name": "Profile",
-          "original_text": "Original section text from resume",
-          "rewritten_text": "Rewritten JD-aligned version"
+          "original_text": "Original section from resume",
+          "rewritten_text": "JD-aligned rewritten section with missing skills added"
         }},
         {{
           "section_name": "Experience",
-          "original_text": "Original section",
-          "rewritten_text": "JD-aligned improved section"
+          "original_text": "...",
+          "rewritten_text": "..."
+        }},
+        {{
+          "section_name": "Projects",
+          "original_text": "...",
+          "rewritten_text": "..."
         }}
       ]
     }}
 
-    Do NOT include markdown, commentary, or explanations.
+    Respond with only valid JSON.
     """
 
     try:
         response = genai.GenerativeModel(MODEL_ID).generate_content(prompt)
         text = response.text.strip()
 
-        # Try parsing JSON safely
-        try:
-            return json.loads(text)
-        except json.JSONDecodeError:
-            start = text.find("{")
-            end = text.rfind("}") + 1
-            if start != -1 and end != -1:
-                return json.loads(text[start:end])
-            else:
-                return {
-                    "summary": "Failed to parse AI output",
-                    "sections": []
-                }
+        # Clean JSON
+        start = text.find("{")
+        end = text.rfind("}") + 1
+        cleaned = text[start:end]
+        return json.loads(cleaned)
 
     except Exception as e:
         return {

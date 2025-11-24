@@ -138,14 +138,43 @@ function App() {
 
         {/* Results */}
         {result && (
-  <div className="mt-8">
+  <div className="mt-10">
     <h2 className="text-2xl font-bold text-green-600 mb-4">
-      JD-Tailored Resume Suggestions
+      Resume Match Analysis
     </h2>
-    <p className="mb-6 bg-blue-50 border-l-4 border-blue-500 p-4 text-gray-800 rounded-md">
-      {result.summary}
-    </p>
 
+    {/* --- Match Summary Card --- */}
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-600">
+        <p className="text-gray-700 font-semibold">Similarity Score</p>
+        <p className="text-3xl font-bold text-blue-700">
+          {result.similarity ? `${result.similarity}%` : "—"}
+        </p>
+      </div>
+
+      <div className="bg-green-50 p-4 rounded-lg border-l-4 border-green-600">
+        <p className="text-gray-700 font-semibold">Match Status</p>
+        <p className="text-xl font-bold text-green-700">
+          {result.match_status}
+        </p>
+      </div>
+
+      <div className="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500">
+        <p className="text-gray-700 font-semibold">Missing Skills</p>
+        <p className="text-sm text-yellow-700">
+          {result.missing_skills && result.missing_skills.length > 0
+            ? result.missing_skills.join(", ")
+            : "None 🎉"}
+        </p>
+      </div>
+    </div>
+
+    {/* --- AI Summary --- */}
+    <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-md mb-8">
+      <p className="text-gray-800 whitespace-pre-line">{result.summary}</p>
+    </div>
+
+    {/* --- Section Rewrites --- */}
     {result.sections && result.sections.length > 0 ? (
       result.sections.map((section, i) => (
         <div key={i} className="mb-6 bg-gray-50 p-4 rounded-lg shadow-sm">
@@ -160,7 +189,9 @@ function App() {
               </p>
             </div>
             <div className="bg-green-50 border border-green-300 p-3 rounded-md">
-              <h4 className="text-green-700 font-semibold mb-1">JD-Aligned Rewrite</h4>
+              <h4 className="text-green-700 font-semibold mb-1">
+                JD-Aligned Rewrite
+              </h4>
               <p className="text-gray-800 text-sm whitespace-pre-wrap">
                 {section.rewritten_text}
               </p>
@@ -173,6 +204,7 @@ function App() {
     )}
   </div>
 )}
+
 
 
       </div>
