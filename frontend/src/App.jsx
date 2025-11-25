@@ -216,7 +216,7 @@ const res = await axios.post(
       </div>
 
       <footer className="mt-8 text-gray-500 text-sm">
-        Built with 💙 by You — Resume Matcher Project
+        Built with 💙 for job aspirants — Resume Matcher
       </footer>
     </div>
   );
