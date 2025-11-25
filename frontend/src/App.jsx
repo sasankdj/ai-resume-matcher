@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
-// if you’re using react-diff-viewer-continued:
-// import DiffViewer from "react-diff-viewer-continued";
+import.meta.env.VITE_API_URL
+
 
 function TextDiff({ original, suggested }) {
   return (
@@ -44,10 +44,16 @@ function App() {
       if (resumeFile) formData.append("resume", resumeFile);
       if (resumeText.trim()) formData.append("resume_text", resumeText);
       formData.append("jd", jd);
+const res = await axios.post(
+  `${import.meta.env.VITE_API_URL}/match_jd`,
+  formData,
+  {
+    headers: { "Content-Type": "multipart/form-data" },
+  }
+);
 
-      const res = await axios.post("http://localhost:5000/match_jd", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+
+
       setResult(res.data);
     } catch (err) {
       console.error(err);
